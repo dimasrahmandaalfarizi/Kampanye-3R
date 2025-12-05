@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Share2, MessageCircle, Instagram, Link2, Download, Check } from "lucide-react";
 
 interface ShareButtonsProps {
@@ -16,9 +16,17 @@ export default function ShareButtons({
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [canShare, setCanShare] = useState(false);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareText = `${title} - ${description}`;
+
+  // Check if Web Share API is available
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'navigator' in window) {
+      setCanShare('share' in navigator && typeof navigator.share === 'function');
+    }
+  }, []);
 
   // Share ke WhatsApp (Status/Group/Chat)
   const shareToWhatsApp = () => {
@@ -141,7 +149,7 @@ export default function ShareButtons({
       </button>
 
       {/* Native Share (Mobile) */}
-      {typeof navigator !== 'undefined' && navigator.share && (
+      {canShare && (
         <button
           onClick={nativeShare}
           className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg sm:rounded-xl transition-all duration-300 font-semibold text-sm sm:text-base border border-primary/20 hover:scale-105"
