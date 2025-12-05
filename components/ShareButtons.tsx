@@ -80,19 +80,30 @@ export default function ShareButtons({
 
   // Native Web Share API
   const nativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title,
-          text: description,
-          url: currentUrl,
-        });
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
+    if (!canShare) {
       // Fallback ke copy link
       copyToClipboard();
+      return;
+    }
+
+    try {
+      if (typeof window !== 'undefined' && 'navigator' in window) {
+        const nav = navigator as any;
+        if (nav.share && typeof nav.share === 'function') {
+          await nav.share({
+            title: title,
+            text: description,
+            url: currentUrl,
+          });
+        } else {
+          copyToClipboard();
+        }
+      } else {
+        copyToClipboard();
+      }
+    } catch (err) {
+      // User cancelled atau error lainnya
+      console.error('Error sharing:', err);
     }
   };
 
