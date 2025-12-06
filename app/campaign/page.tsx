@@ -52,8 +52,6 @@ export default function CampaignPage() {
               </p>
             </div>
             <ShareButtons 
-              title="Poster Kampanye UPN GAIA PROJECT"
-              description="Kampanye lingkungan dan pembangunan berkelanjutan"
               imageUrl="/images/Poster.jpeg"
             />
           </div>
