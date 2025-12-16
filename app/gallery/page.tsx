@@ -1,4 +1,8 @@
+"use client";
+
 import SectionTitle from "@/components/SectionTitle";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 // Data gambar galeri - sesuaikan dengan nama file di public/images/gallery
 const galleryImages = [
@@ -11,6 +15,27 @@ const galleryImages = [
 ];
 
 export default function GalleryPage() {
+  const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
+
+  const handleImageClick = (image: typeof galleryImages[0]) => {
+    setSelectedImage(image);
+    // Mencegah scroll saat modal terbuka
+    document.body.style.overflow = "hidden";
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+    // Mengembalikan scroll
+    document.body.style.overflow = "auto";
+  };
+
+  // Tutup modal dengan Escape key
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      handleCloseModal();
+    }
+  };
+
   return (
     <div className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 min-h-screen pb-16 sm:pb-20 md:pb-24">
       <div className="container mx-auto max-w-6xl">
@@ -25,7 +50,8 @@ export default function GalleryPage() {
             {galleryImages.map((image) => (
               <div
                 key={image.id}
-                className="aspect-square rounded-lg overflow-hidden bg-secondary/10 hover:bg-secondary/20 transition-colors group"
+                className="aspect-square rounded-lg overflow-hidden bg-secondary/10 hover:bg-secondary/20 transition-colors group cursor-pointer"
+                onClick={() => handleImageClick(image)}
               >
                 <div className="relative w-full h-full">
                   <img
@@ -36,30 +62,104 @@ export default function GalleryPage() {
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                   
-                  {/* Fallback jika gambar tidak ditemukan */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {/* <p className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-md">
-                      Lihat Detail
-                    </p> */}
+                    <p className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-md">
+                      Klik untuk memperbesar
+                    </p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          
-          {/* Catatan untuk pengguna */}
-          {/* <div className="mt-10 p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground text-center">
-              📁 Pastikan file gambar sudah ditaruh di folder{" "}
-              <code className="bg-background px-2 py-1 rounded text-xs">
-                public/images/gallery/
-              </code>
-              <br />
-              dengan nama: gambar1.jpg, gambar2.jpg, dst.
-            </p>
-          </div> */}
         </div>
       </div>
+
+      {/* Modal untuk gambar besar */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={handleCloseModal}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+        >
+          <button
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-50"
+            onClick={handleCloseModal}
+            aria-label="Tutup"
+          >
+            <X size={32} />
+          </button>
+
+          <div 
+            className="relative max-w-5xl max-h-[90vh] w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col items-center">
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg"
+              />
+              
+              <div className="mt-4 text-center text-white">
+                <p className="text-lg font-medium">{selectedImage.alt}</p>
+                <p className="text-sm text-gray-300 mt-1">
+                  Gambar {selectedImage.id} dari {galleryImages.length}
+                </p>
+              </div>
+            </div>
+
+            {/* Tombol navigasi gambar sebelumnya/selanjutnya */}
+            <div className="absolute top-1/2 left-4 right-4 transform -translate-y-1/2 flex justify-between">
+              <button
+                className="text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.id);
+                  const prevIndex = currentIndex > 0 ? currentIndex - 1 : galleryImages.length - 1;
+                  setSelectedImage(galleryImages[prevIndex]);
+                }}
+                aria-label="Gambar sebelumnya"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              
+              <button
+                className="text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const currentIndex = galleryImages.findIndex(img => img.id === selectedImage.id);
+                  const nextIndex = currentIndex < galleryImages.length - 1 ? currentIndex + 1 : 0;
+                  setSelectedImage(galleryImages[nextIndex]);
+                }}
+                aria-label="Gambar selanjutnya"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Tombol tutup di bagian bawah untuk mobile */}
+            <div className="mt-6 flex justify-center md:hidden">
+              <button
+                className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors"
+                onClick={handleCloseModal}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+
+          {/* Instruksi untuk pengguna */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm text-center opacity-70">
+            <p className="hidden md:block">Tekan ESC atau klik di luar gambar untuk menutup</p>
+            <p className="hidden md:block">Gunakan tombol panah untuk navigasi</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
