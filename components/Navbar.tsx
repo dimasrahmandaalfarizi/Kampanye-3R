@@ -15,6 +15,8 @@ export default function Navbar() {
     { href: "/about", label: "Tentang Isu" },
     { href: "/campaign", label: "Poster Kampanye" },
     { href: "/actions", label: "Tindakan" },
+    { href: "/literasi", label: "Literasi" },
+    { href: "/infografis", label: "Infografis" },
     { href: "/team", label: "Tim" },
     { href: "/gallery", label: "Galeri" },
   ];

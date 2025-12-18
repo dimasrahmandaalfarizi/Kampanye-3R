@@ -29,7 +29,7 @@ export default function TeamPage() {
     },
     {
       id: 3,
-      name: "Kavaana Nafila N. K. (25081010317)",
+      name: "Kavana Nafila N. K. (25081010317)",
       role: "Content Creator",
       icon: PenTool,
       color: "text-green-600",

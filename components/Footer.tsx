@@ -37,6 +37,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/literasi" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
+                  Literasi
+                </Link>
+              </li>
+              <li>
+                <Link href="/infografis" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
+                  Infografis
+                </Link>
+              </li>
+              <li>
                 <Link href="/team" className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block">
                   Tim
                 </Link>
