@@ -202,7 +202,10 @@ export default function InfografisPage() {
                         />
                         <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip 
-                          formatter={(value: number) => [`${value} responden (${((value / totalResponden) * 100).toFixed(1)}%)`, 'Jumlah']}
+                          formatter={(value: number | undefined) => {
+                            if (value === undefined) return ['0 responden (0%)', 'Jumlah'];
+                            return [`${value} responden (${((value / totalResponden) * 100).toFixed(1)}%)`, 'Jumlah'];
+                          }}
                         />
                         <Legend />
                         <Bar 
@@ -226,7 +229,10 @@ export default function InfografisPage() {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                          label={({ name, value }) => {
+                            const percentage = ((value / totalResponden) * 100).toFixed(1);
+                            return `${name}: ${percentage}%`;
+                          }}
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
@@ -236,7 +242,10 @@ export default function InfografisPage() {
                           ))}
                         </Pie>
                         <Tooltip 
-                          formatter={(value: number) => [`${value} responden (${((value / totalResponden) * 100).toFixed(1)}%)`, 'Jumlah']}
+                          formatter={(value: number | undefined) => {
+                            if (value === undefined) return ['0 responden (0%)', 'Jumlah'];
+                            return [`${value} responden (${((value / totalResponden) * 100).toFixed(1)}%)`, 'Jumlah'];
+                          }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
